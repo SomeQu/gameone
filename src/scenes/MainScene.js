@@ -1,12 +1,17 @@
 import Phaser from 'phaser'
+import { useState } from 'react';
 
 export default class MainScene extends Phaser.Scene 
 {
+  state={
+    boxHP:100
+  }
   constructor() {
     super( "MainScene")
     this.player=null
     this.box=null
-    this.boxHP = 100;
+    this.swordHitbox=null
+    
   }
   preload(){
     this.load.image('sky', '/images/bluesky.jpeg')
@@ -17,30 +22,44 @@ export default class MainScene extends Phaser.Scene
     {frameWidth:300, frameHeight:100 });
   
   }
-  
   create() {
+    
     this.add.image('961','320','sky')
+
     this.ground = this.physics.add.staticGroup()
+
     this.ground.create('961', '620', 'ground')
     this.ground.create('300', '620', 'ground')
     this.ground.create('1500', '620', 'ground')
-    this.player=this.physics.add.sprite(100, 500,'player')
+
+
+    this.player=this.physics.add.sprite(100, 500,'player', 'idle_1.png')
     this.player.setBodySize(50,100)
     this.player.setCollideWorldBounds(true)
     this.physics.add.collider(this.player, this.ground)
-    const framesNames = this.textures.get('player').getFrameNames();
-    console.log(framesNames)
+   
     this.cursor = this.input.keyboard.createCursorKeys()
+
+
     this.box = this.add.rectangle(400, 550, 100, 100, 0xffffff);
     this.physics.add.existing(this.box, true)
     this.physics.add.collider(this.player, this.box)
-    this.hpText = this.add.text(this.box.x, this.box.y - 90, `HP: ${this.boxHP}`)
-			.setOrigin(0.5)
-    this.swordHitbox = this.add.rectangle(50, 50, 50, 50, '0xffffff')
+    this.hpText = this.add.text(this.box.x, this.box.y - 90, `HP: ${this.state.boxHP}`)
+			.setOrigin(0.5).setVisible(true)
+
+
+    this.swordHitbox = this.add.rectangle(100, 100, 50, 50, 0xffffff,0)
 		this.physics.add.existing(this.swordHitbox)
 		this.swordHitbox.body.enable = false
-		this.physics.world.remove(this.swordHitbox.body)
+		this.physics.world.add(this.swordHitbox.body)
+    this.physics.world.remove(this.swordHitbox.body)
+
 		console.log(this.swordHitbox.body)
+
+
+    this.physics.add.collider(this.swordHitbox, this.box)
+     this.physics.add.overlap(this.swordHitbox, this.box, this.overlapping, null, this);
+     
     this.anims.create({
       key:'run',
       frames:this.player.anims.generateFrameNames('player', {
@@ -111,13 +130,25 @@ export default class MainScene extends Phaser.Scene
     })
     console.log(this.player)
     // this.scene.start("MainScene");
-
+    
   }
-
+  overlapping(box, swordHitbox){
+    console.log('hi there')
+    this.state.boxHP += -10
+    console.log(this.state.boxHP)
+  }
+  criticalHP(){
+    if(this.hpText.text<= 30){
+      this.box.fillColor = 0xff0000
+    }
+    if(this.hpText.text<=0){
+      this.box.destroy()
+      this.hpText.setVisible(false)
+    }
+  }
   update(){
-    if (checkOverlap(this.ballBlue, this.goal)) {
-      console.log('overlapping');
-  }
+    this.hpText.text =`${this.state.boxHP}`
+    this.criticalHP()
     this.swordHitbox.x=this.player.x + this.player.width 
     this.swordHitbox.y=this.player.y
    
@@ -146,6 +177,14 @@ export default class MainScene extends Phaser.Scene
 
     }else if(this.cursor.space.isDown){
         this.player.play('attack',false).chain('idle')
+        this.swordHitbox.body.enable = true
+			this.physics.world.add(this.swordHitbox.body)
+      setTimeout(() => {
+        this.swordHitbox.body.enable = false
+        this.physics.world.remove(this.swordHitbox.body)
+        
+      }, 15);
+
       }  
       
 
