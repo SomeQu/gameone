@@ -10,8 +10,10 @@ import MainScene from './scenes/MainScene'
         physics: {
           default: "arcade",
           arcade: {
-            gravity: {y: 300 }
+            gravity: {y: 300 },
+            debug:true
           }
+          
         },
         scene: [MainScene],
         pixelArt: true,
