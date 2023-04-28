@@ -34,8 +34,9 @@ export default class MainScene extends Phaser.Scene
 
 
     this.player=this.physics.add.sprite(100, 500,'player', 'idle_1.png')
-    this.player.setBodySize(50,100)
-    this.player.setCollideWorldBounds(true)
+    this.player.setScale(2);
+    this.player.setBodySize(50, 50, 0.5, 0.5);
+    this.player.body.setOffset(120, 79);    this.player.setCollideWorldBounds(true)
     this.physics.add.collider(this.player, this.ground)
    
     this.cursor = this.input.keyboard.createCursorKeys()
@@ -48,86 +49,91 @@ export default class MainScene extends Phaser.Scene
 			.setOrigin(0.5).setVisible(true)
 
 
-    this.swordHitbox = this.add.rectangle(100, 100, 50, 50, 0xffffff,0)
-		this.physics.add.existing(this.swordHitbox)
-		this.swordHitbox.body.enable = false
-		this.physics.world.add(this.swordHitbox.body)
-    this.physics.world.remove(this.swordHitbox.body)
+    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff",0);
+    this.physics.add.existing(this.swordHitbox);
+    this.swordHitbox.body.enable = false;
+    this.physics.world.remove(this.swordHitbox.body);
+    console.log(this.swordHitbox.body);
+
 
 		console.log(this.swordHitbox.body)
 
 
-    this.physics.add.collider(this.swordHitbox, this.box)
-     this.physics.add.overlap(this.swordHitbox, this.box, this.overlapping, null, this);
+        this.physics.add.collider(this.swordHitbox, this.box);
+    this.physics.add.overlap(
+      this.swordHitbox,
+      this.box,
+      this.overlapping,
+      null,
+      this
+    );
      
     this.anims.create({
-      key:'run',
-      frames:this.player.anims.generateFrameNames('player', {
-        start:1,
-        end:8,
-        prefix:'run_',
-        suffix:'.png'
+      key: "run",
+      frames: this.player.anims.generateFrameNames("player", {
+        start: 0,
+        end: 7,
+        prefix: "#run_",
+        suffix: ".png",
       }),
-      frameRate:15,
-    })
+      frameRate: 15,
+    });
     this.anims.create({
-      key:'jump',
-      frames:this.player.anims.generateFrameNames('player', {
-        start:1,
-        end:20,
-        prefix:'jump_',
-        suffix:'.png',
+      key: "jump",
+      frames: this.player.anims.generateFrameNames("player", {
+        start: 0,
+        end: 19,
+        prefix: "#jump_",
+        suffix: ".png",
+      }),
+      frameRate: 10,
+    });
+    this.anims.create({
+      key: "jumpup",
+      frames: this.player.anims.generateFrameNames("player", {
+        start: 1,
+        end: 3,
+        prefix: "jumpup_",
+        suffix: ".png",
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
 
+    this.anims.create({
+      key: "idle",
+      frames: this.player.anims.generateFrameNames("player", {
+        start: 0,
+        end: 7,
+        prefix: "#idle_",
+        suffix: ".png",
       }),
-      frameRate:10,
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "jumpd",
+      frames: this.player.anims.generateFrameNames("player", {
+        start: 1,
+        end: 3,
+        prefix: "jumpd_",
+        suffix: ".png",
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "attack",
+      frames: this.player.anims.generateFrameNames("player", {
+        start: 0,
+        end: 10,
+        prefix: "#1_atk_",
+        suffix: ".png",
+      }),
+      frameRate: 20,
+      repeat: 0,
+    });
 
-    })
-    this.anims.create({
-      key:'jumpup',
-      frames:this.player.anims.generateFrameNames('player', {
-        start:1,
-        end:3,
-        prefix:'jumpup_',
-        suffix:'.png'
-      }),
-      frameRate:10,
-      repeat:-1
-    })
-      
-    this.anims.create({
-      key:'idle',
-      frames:this.player.anims.generateFrameNames('player', {
-        start:2,
-        end:8,
-        prefix:'idle_',
-        suffix:'.png'
-      }),
-      frameRate:10,
-      repeat:-1,
-
-    })
-    this.anims.create({
-      key:'jumpd',
-      frames:this.player.anims.generateFrameNames('player', {
-        start:1,
-        end:3,
-        prefix:'jumpd_',
-        suffix:'.png'
-      }),
-      frameRate:10,
-      repeat:-1
-    })
-    this.anims.create({
-      key:'attack',
-      frames:this.player.anims.generateFrameNames('player', {
-        start:1,
-        end:11,
-        prefix:'1_atk_',
-        suffix:'.png'
-      }),
-      frameRate:20,
-      repeat:0
-    })
     console.log(this.player)
     // this.scene.start("MainScene");
     
@@ -149,8 +155,8 @@ export default class MainScene extends Phaser.Scene
   update(){
     this.hpText.text =`${this.state.boxHP}`
     this.criticalHP()
-    this.swordHitbox.x=this.player.x + this.player.width 
-    this.swordHitbox.y=this.player.y
+    this.swordHitbox.x = this.player.x + 80;
+    this.swordHitbox.y = this.player.y + 60;
    
      this.player.setVelocityX(0)
     if(this.cursor.left.isDown){
@@ -183,7 +189,7 @@ export default class MainScene extends Phaser.Scene
         this.swordHitbox.body.enable = false
         this.physics.world.remove(this.swordHitbox.body)
         
-      }, 15);
+      }, 20);
 
       }  
       
