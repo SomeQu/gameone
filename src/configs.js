@@ -1,6 +1,5 @@
 import Phaser from "phaser";
-import { LoadingScene } from "./scenes/LoadingScene";
-import HomeScene from "./scenes/HomeScene";
+import MainScene from "./scenes/MainScene";
 
 const config = {
   type: Phaser.WEBGL,
@@ -14,7 +13,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [HomeScene],
+  scene: [MainScene],
   pixelArt: true,
   roundPixels: true,
 };
