@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import config from '../configs';
 
 let abc=false;
 class Laser extends Phaser.Physics.Arcade.Sprite
@@ -6,18 +7,18 @@ class Laser extends Phaser.Physics.Arcade.Sprite
 
 	constructor(scene, x, y) {
 		super(scene, x, y, 'laser');
+    
 	}
-
 	fire(x, y) {
 		this.body.reset(x, y);
 
 		this.setActive(true);
 		this.setVisible(true);
     if(!abc){
-      this.setVelocityX(900);
+      this.setVelocityX(1200);
 
     }else{
-      this.setVelocityX(-900);
+      this.setVelocityX(-1200);
 
     }
     this.body.allowGravity=false
@@ -40,16 +41,15 @@ class LaserGroup extends Phaser.Physics.Arcade.Group
 	constructor(scene) {
 		super(scene.physics.world, scene);
 
-       this.lassor =this.createMultiple({
+    this.createMultiple({
 			frameQuantity: 30,
-			key: 'laser',
+			key:'laser02',
 			active: false,
 			visible: false,
 			classType: Laser,
 		});
  
 	}
- 
 	fireBullet(x, y) {
 		const laser = this.getFirstDead(false);
 
@@ -73,7 +73,7 @@ export default class MainScene extends Phaser.Scene
     this.swordHitbox=null
   }
   preload(){
-    this.load.image('laser', '/player2/shoot.png')
+    this.load.atlas('laser', '/player2/shoot.png','/player2/shoot_atlas.json')
     this.load.image('sky', '/images/bluesky.jpeg')
     this.load.image('ground', '/images/ground.png')
     this.load.atlas('player', 
@@ -88,11 +88,11 @@ export default class MainScene extends Phaser.Scene
   }
   
   create() {
-    this.laserGroup = new LaserGroup(this);
-    this.add.image('961','320','sky')
-    
+    this.laserGroup = new LaserGroup(this,config);
+    this.laserGroup.setDepth(1);
+    // this.laserGroup.angle(90)
+    this.add.image('961','320','sky');
     this.ground = this.physics.add.staticGroup()
-
     this.ground.create('961', '620', 'ground')
     this.ground.create('300', '620', 'ground')
     this.ground.create('1500', '620', 'ground')
@@ -150,7 +150,7 @@ export default class MainScene extends Phaser.Scene
       null,
       this
     );
-     
+    
     this.anims.create({
       key: "run",
       frames: this.player.anims.generateFrameNames("player", {
@@ -359,9 +359,7 @@ export default class MainScene extends Phaser.Scene
         this.physics.world.remove(this.swordHitbox.body)
       }, 20);
       this.fireBullet();
-
-      }  
-    
+      }
   }
     
   
