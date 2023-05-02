@@ -5,7 +5,6 @@ const config = {
   type: Phaser.WEBGL,
   width: "100%",
   height: "115%",
-
   backgroundColor: "grey",
   physics: {
     default: "arcade",

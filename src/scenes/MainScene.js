@@ -9,14 +9,15 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
   }
 
   fire(x, y) {
-    this.body.reset(x, y);
+		this.body.reset(x, y);
 
-    this.setActive(true);
-    this.setVisible(true);
-    if (!abc) {
-      this.setVelocityX(900);
-    } else {
-      this.setVelocityX(-900);
+		this.setActive(true);
+		this.setVisible(true);
+    if(!abc){
+      this.setVelocityX(1200);
+
+    }else{
+      this.setVelocityX(-1200);
     }
     this.body.allowGravity = false;
     console.log(abc);
@@ -32,9 +33,29 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
   }
 }
 
-class LaserGroup extends Phaser.Physics.Arcade.Group {
-  constructor(scene) {
-    super(scene.physics.world, scene);
+class LaserGroup extends Phaser.Physics.Arcade.Group
+{
+  
+	constructor(scene) {
+		super(scene.physics.world, scene);
+
+    this.createMultiple({
+			frameQuantity: 30,
+			key:'laser02',
+			active: false,
+			visible: false,
+			classType: Laser,
+		});
+ 
+	}
+	fireBullet(x, y) {
+		const laser = this.getFirstDead(false);
+
+		if(laser) {
+			laser.fire(x, y);
+		}
+	}
+
 
     this.lassor = this.createMultiple({
       frameQuantity: 30,
@@ -68,6 +89,7 @@ export default class MainScene extends Phaser.Scene {
     this.shop = null;
     this.ekey = null;
   }
+
   preload() {
     this.load.image("sky", "/background/sky.png");
     this.load.image("ground", "/background/ground.png");
@@ -121,6 +143,8 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.collider(this.enemies, this.ground);
 
     this.laserGroup = new LaserGroup(this);
+    this.laserGroup.setDepth(1);
+    // this.laserGroup.angle(90)
     // Настройка свойств камеры и создание
     this.cameras.main.fadeIn(5000);
     const camera = this.cameras.add(3840, 1080);
@@ -569,6 +593,7 @@ export default class MainScene extends Phaser.Scene {
         this.physics.world.remove(this.swordHitbox.body);
       }, 20);
       this.fireBullet();
+
     }
     // Shop на E
     if (this.physics.overlap(this.player, this.shop)) {
