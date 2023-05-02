@@ -1,0 +1,55 @@
+{
+  "frames": {
+    "portalRings2_0.png": {
+      "frame": { "x": 1, "y": 1, "w": 32, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "duration": 100
+    },
+    "portalRings2_1.png": {
+      "frame": { "x": 35, "y": 1, "w": 32, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "duration": 100
+    },
+    "portalRings2_2.png": {
+      "frame": { "x": 69, "y": 1, "w": 32, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "duration": 100
+    },
+    "portalRings2_3.png": {
+      "frame": { "x": 103, "y": 1, "w": 32, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "duration": 100
+    },
+    "portalRings2_4.png": {
+      "frame": { "x": 137, "y": 1, "w": 32, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 32, "h": 32 },
+      "duration": 100
+    }
+  },
+  "meta": {
+    "app": "https://www.aseprite.org/",
+    "version": "1.2.32-x64",
+    "image": "portal.png",
+    "format": "RGBA8888",
+    "size": { "w": 170, "h": 34 },
+    "scale": "1",
+    "frameTags": [],
+    "layers": [{ "name": "Layer 1", "opacity": 255, "blendMode": "normal" }],
+    "slices": []
+  }
+}
