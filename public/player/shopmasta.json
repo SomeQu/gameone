@@ -1,0 +1,84 @@
+{ "frames": {
+   "#speak_0.png": {
+    "frame": { "x": 0, "y": 0, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#speak_1.png": {
+    "frame": { "x": 64, "y": 0, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#speak_2.png": {
+    "frame": { "x": 128, "y": 0, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#speak_3.png": {
+    "frame": { "x": 192, "y": 0, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#stay_0.png": {
+    "frame": { "x": 0, "y": 80, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#stay_1.png": {
+    "frame": { "x": 64, "y": 80, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#stay_2.png": {
+    "frame": { "x": 128, "y": 80, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   },
+   "#stay_3.png": {
+    "frame": { "x": 192, "y": 80, "w": 64, "h": 80 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 16, "y": 0, "w": 64, "h": 80 },
+    "sourceSize": { "w": 94, "h": 91 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.2.32-x64",
+  "image": "shopmasta.png",
+  "format": "RGBA8888",
+  "size": { "w": 256, "h": 160 },
+  "scale": "1",
+  "frameTags": [
+   { "name": "speak", "from": 0, "to": 3, "direction": "forward" },
+   { "name": "stay", "from": 4, "to": 7, "direction": "forward" }
+  ],
+  "layers": [
+   { "name": "Layer", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

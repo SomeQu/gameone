@@ -3,8 +3,9 @@ import MainScene from "./scenes/MainScene";
 
 const config = {
   type: Phaser.WEBGL,
-  width: 1500,
-  height: 800,
+  width: "100%",
+  height: "115%",
+
   backgroundColor: "grey",
   physics: {
     default: "arcade",

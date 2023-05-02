@@ -1,101 +1,108 @@
-
-import Phaser from 'phaser'
+import Phaser from "phaser";
 import Enemy from "./Enemy";
 import GameOver from "./GameOver";
 
-let abc=false;
-class Laser extends Phaser.Physics.Arcade.Sprite
-{
+let abc = false;
+class Laser extends Phaser.Physics.Arcade.Sprite {
+  constructor(scene, x, y) {
+    super(scene, x, y, "laser");
+  }
 
-	constructor(scene, x, y) {
-		super(scene, x, y, 'laser');
-	}
+  fire(x, y) {
+    this.body.reset(x, y);
 
-	fire(x, y) {
-		this.body.reset(x, y);
-
-		this.setActive(true);
-		this.setVisible(true);
-    if(!abc){
+    this.setActive(true);
+    this.setVisible(true);
+    if (!abc) {
       this.setVelocityX(900);
-
-    }else{
+    } else {
       this.setVelocityX(-900);
-
     }
-    this.body.allowGravity=false
-    console.log(abc)
-	}
+    this.body.allowGravity = false;
+    console.log(abc);
+  }
 
   preUpdate(time, delta) {
-		super.preUpdate(time, delta);
- 
-		if (this.x >= 1920) {
-			this.setActive(false);
-			this.setVisible(false);
-		}
-	}
-}
+    super.preUpdate(time, delta);
 
-class LaserGroup extends Phaser.Physics.Arcade.Group
-{
-  
-	constructor(scene) {
-		super(scene.physics.world, scene);
-
-       this.lassor =this.createMultiple({
-			frameQuantity: 30,
-			key: 'laser',
-			active: false,
-			visible: false,
-			classType: Laser,
-		});
- 
-	}
- 
-	fireBullet(x, y) {
-		const laser = this.getFirstDead(false);
-
-		if(laser) {
-			laser.fire(x, y);
-		}
-	}
-
-}
-
-export default class MainScene extends Phaser.Scene 
-{
-  state={
-    boxHP:100,
+    if (this.x >= 1920) {
+      this.setActive(false);
+      this.setVisible(false);
+    }
   }
+}
+
+class LaserGroup extends Phaser.Physics.Arcade.Group {
+  constructor(scene) {
+    super(scene.physics.world, scene);
+
+    this.lassor = this.createMultiple({
+      frameQuantity: 30,
+      key: "laser",
+      active: false,
+      visible: false,
+      classType: Laser,
+    });
+  }
+
+  fireBullet(x, y) {
+    const laser = this.getFirstDead(false);
+
+    if (laser) {
+      laser.fire(x, y);
+    }
+  }
+}
+
+export default class MainScene extends Phaser.Scene {
+  state = {
+    boxHP: 100,
+  };
   constructor() {
-    super( "MainScene")
-    this.player=null
-    this.player2=null
-    this.box=null
-    this.swordHitbox=null
+    super("MainScene");
+    this.player = null;
+    this.player2 = null;
+    this.box = null;
+    this.swordHitbox = null;
+    this.portal = null;
+    this.shop = null;
+    this.ekey = null;
   }
-  preload(){
-    this.load.image('laser', '/player2/shoot.png')
-    this.load.image('sky', '/images/bluesky.jpeg')
-    this.load.image('ground', '/images/ground.png')
-    this.load.atlas('player', 
-    '/player/knight_texture.png',
-    '/player/knight_texture.json', 
-    {frameWidth:300, frameHeight:100 });
-    this.load.atlas('player2', 
-    '/player2/ranger.png',
-     '/player2/ranger_atlas.json',
-     {frameWidth:300, frameHeight:100 })
-         this.load.atlas(
+  preload() {
+    this.load.image("sky", "/background/sky.png");
+    this.load.image("ground", "/background/ground.png");
+    this.load.image("sky1", "/background/sky1.png");
+    this.load.image("under", "/background/under.png");
+    this.load.image("sky2", "/background/sky1.png");
+
+    this.load.image("laser", "/player2/shoot.png");
+
+    this.load.atlas(
+      "player",
+      "/player/knight_texture.png",
+      "/player/knight_texture.json",
+      { frameWidth: 300, frameHeight: 100 }
+    );
+    this.load.atlas(
+      "player2",
+      "/player2/ranger.png",
+      "/player2/ranger_atlas.json",
+      { frameWidth: 300, frameHeight: 100 }
+    );
+    this.load.atlas(
       "enemyBot",
       "/enemyBot/skeleton_sheet.png",
       "/enemyBot/skeleton_atlas.json",
       { frameWidth: 300, frameHeight: 100 }
     );
-    
+    this.load.atlas("shop", "/player/shopmasta.png", "/player/shopmasta.json");
+    this.load.atlas(
+      "portal",
+      "/player/portal.png",
+      "/player/portal_atlas.json"
+    );
   }
-  
+
   create() {
     // группа для ботов
     this.enemies = this.add.group({
@@ -107,58 +114,135 @@ export default class MainScene extends Phaser.Scene
     // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
     this.time.addEvent({
       delay: 3000,
-      loop: false,
+      loop: true,
       callback: this.addEnemy,
       callbackScope: this, // контекст функции
     });
     this.physics.add.collider(this.enemies, this.ground);
-    
 
-    this.add.image("961", "320", "sky");
     this.laserGroup = new LaserGroup(this);
-    this.add.image('961','320','sky')
-    
-    this.ground = this.physics.add.staticGroup()
+    // Настройка свойств камеры и создание
+    this.cameras.main.fadeIn(5000);
+    const camera = this.cameras.add(3840, 1080);
+    camera.setBackgroundColor("#000000");
+    camera.setZoom();
+    camera.setBounds(0, 0, 0, 0);
 
+    // Окружение земля, небо
+    this.add.image("961", "320", "sky");
+    this.add.image("-958", "320", "sky1");
+    this.add.image("2880", "320", "sky2");
+    this.ground = this.physics.add.staticGroup();
+    this.ground.create("2970", "880", "ground");
+    this.ground.create("961", "880", "ground");
+    this.ground.create("-1020", "880", "ground");
 
-    this.ground.create("961", "620", "ground");
-    this.ground.create("300", "620", "ground");
-    this.ground.create("1500", "620", "ground");
-
+    this.ground.children.entries[0].setSize(1920, 30);
+    this.ground.children.entries[1].setSize(1920, 30);
+    this.ground.children.entries[2].setSize(1920, 30);
 
     //*  мечник
-    this.player=this.physics.add.sprite(100, 500,'player', 'idle_1.png')
+    this.player = this.physics.add.sprite(100, 720, "player");
     this.player.setScale(2);
     this.player.setBodySize(50, 50, 0.5, 0.5);
-    this.player.body.setOffset(120, 79);    
-    this.player.setCollideWorldBounds(true)
-    this.physics.add.collider(this.player, this.ground)
-   
+    this.player.body.setOffset(120, 79);
+    this.player.setCollideWorldBounds(true);
+    this.physics.add.collider(this.player, this.ground);
+    const framesNames = this.textures.get("player").getFrameNames();
+    console.log(framesNames);
+    // камера
+    this.cameras.main.startFollow(this.player, true, 0.05, 0.05, -200, 200);
+
     //* лучница
-    this.player2=this.physics.add.sprite(200,400, 'player2', 'idle_0.aseprite' )
+    this.player2 = this.physics.add.sprite(
+      200,
+      400,
+      "player2",
+      "idle_0.aseprite"
+    );
     this.player2.setScale(2);
     this.player2.setBodySize(50, 50, 0.5, 0.5);
-    this.player2.body.setOffset(120, 79);    
-    this.player2.setCollideWorldBounds(true)
-    this.physics.add.collider(this.player2, this.ground)
+    this.player2.body.setOffset(120, 79);
+    this.player2.setCollideWorldBounds(true);
+    this.physics.add.collider(this.player2, this.ground);
 
-    this.cursor = this.input.keyboard.createCursorKeys()
+    this.cursor = this.input.keyboard.createCursorKeys();
     this.cursor = this.input.keyboard.createCursorKeys();
     this.box = this.add.rectangle(400, 550, 100, 100, 0xffffff);
 
-    this.physics.add.existing(this.box, true)
-    this.physics.add.collider(this.player, this.box)
-    this.hpText = this.add.text(this.box.x, this.box.y - 90, `HP: ${Math.floor(this.state.boxHP)}`)
-			.setOrigin(0.5).setVisible(true)
+    this.physics.add.existing(this.box, true);
+    this.physics.add.collider(this.player, this.box);
+    this.hpText = this.add
+      .text(this.box.x, this.box.y - 90, `HP: ${Math.floor(this.state.boxHP)}`)
+      .setOrigin(0.5)
+      .setVisible(true);
 
-    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff", 0);
+    // SHOP
+    this.shop = this.physics.add.sprite(800, 795, "shop");
+    this.shop.setScale(1.5);
+    this.shop.setBodySize(40, 60);
+    this.physics.add.collider(this.shop, this.ground);
+    this.shopText = this.add.text(650, 720, "Press `E` to enter the shop.", {
+      fontSize: "20px",
+      fill: "#000000",
+    });
+    this.shopText.setFontStyle("bold");
+
+    // взаимодействие на Е
+    this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
+    const framesNamesShop = this.textures.get("shop").getFrameNames();
+    console.log(framesNamesShop);
+
+    this.anims.create({
+      key: "speak",
+      frames: this.shop.anims.generateFrameNames("shop", {
+        start: 0,
+        end: 3,
+        prefix: "#speak_",
+        suffix: ".png",
+      }),
+
+      frameRate: 4,
+      repeat: 0,
+    });
+    // shop and player
+    this.player.setDepth(1);
+    this.shop.setDepth(0);
+
+    // PORTAL
+    this.portal = this.physics.add.sprite(1800, 595, "portal");
+    this.portal.setScale(4);
+    this.portal.setBodySize(40, 35);
+    this.physics.add.collider(this.portal, this.ground);
+
+    // взаимодействие на T
+    this.TKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
+    const framesNamesPortal = this.textures.get("portal").getFrameNames();
+    console.log(framesNamesPortal);
+
+    this.anims.create({
+      key: "round",
+      frames: this.portal.anims.generateFrameNames("portal", {
+        start: 0,
+        end: 4,
+        prefix: "portalRings2_",
+        suffix: ".png",
+      }),
+
+      frameRate: 8,
+      repeat: 0,
+    });
+    this.player.setDepth(1);
+    this.portal.setDepth(0);
+
+    // Sword Hitbox
+    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff");
     this.physics.add.existing(this.swordHitbox);
     this.swordHitbox.body.enable = false;
     this.physics.world.remove(this.swordHitbox.body);
     console.log(this.swordHitbox.body);
 
-
-        this.physics.add.collider(this.swordHitbox, this.box);
+    this.physics.add.collider(this.swordHitbox, this.box);
     this.physics.add.overlap(
       this.swordHitbox,
       this.box,
@@ -167,7 +251,6 @@ export default class MainScene extends Phaser.Scene
       this
     );
 
-
     this.physics.add.overlap(
       this.laserGroup,
       this.box,
@@ -175,7 +258,7 @@ export default class MainScene extends Phaser.Scene
       null,
       this
     );
-     
+
     this.anims.create({
       key: "run",
       frames: this.player.anims.generateFrameNames("player", {
@@ -241,7 +324,7 @@ export default class MainScene extends Phaser.Scene
       frameRate: 20,
       repeat: 0,
     });
-    
+
     this.anims.create({
       key: "run2",
       frames: this.player2.anims.generateFrameNames("player2", {
@@ -286,8 +369,8 @@ export default class MainScene extends Phaser.Scene
       frameRate: 50,
       repeat: 0,
     });
-    console.log(this.player)
-    
+    console.log(this.player);
+
     // this.scene.start("MainScene");
     // какого-то хуя не работают анимации ругаетя на generateframesname
 
@@ -383,7 +466,7 @@ export default class MainScene extends Phaser.Scene
     // добавляем бота в группу
     this.enemies.add(enemy);
   }
-  
+
   overlapping(box, swordHitbox) {
     console.log("hi there");
     this.state.boxHP += -10;
@@ -392,103 +475,130 @@ export default class MainScene extends Phaser.Scene
   criticalHP() {
     if (this.hpText.text <= 30) {
       this.box.fillColor = 0xff0000;
-      
-    if (this.hpText.text <= 0) {
-       this.hpText.setVisible(false);
-       this.time.delayedCall(1000, () => {
-       this.scene.start("GameOver");
-    });
+
+      if (this.hpText.text <= 0) {
+        this.hpText.setVisible(false);
+        this.time.delayedCall(1000, () => {
+          // this.scene.start("GameOver");
+        });
+      }
+    }
   }
-  bulletOverlapping(){
-    this.state.boxHP += -0.5
+
+  bulletOverlapping() {
+    this.state.boxHP += -0.5;
+  }
+
+  fireBullet() {
+    if (!abc) {
+      this.laserGroup.fireBullet(this.player2.x + 80, this.player2.y + 60);
+    } else {
+      this.laserGroup.fireBullet(this.player2.x - 80, this.player2.y + 60);
     }
-    
-      fireBullet() {
-    if(!abc){
+  }
 
-      this.laserGroup.fireBullet(this.player2.x+80, this.player2.y+60);
-    }else{
-      this.laserGroup.fireBullet(this.player2.x-80, this.player2.y+60);
+  update(time, delta) {
+    this.hpText.text = `${this.state.boxHP}`;
+    this.criticalHP();
 
+    // анимации шоп
+    this.shop.setVelocityX(0);
+    if (this.shop.setVelocityX(0)) {
+      this.shop.play("speak", true);
     }
 
-    
-	}
+    // анимации портала
+    this.portal.setVelocityX(0);
+    if (this.portal.setVelocityX(0)) {
+      this.portal.play("round", true);
+    }
 
+    this.player2.setVelocityX(0);
+    this.player.setVelocityX(0);
+    if (this.cursor.left.isDown) {
+      this.player.setVelocityX(-150);
+      this.player2.setVelocityX(-150);
+      if (this.player.body.velocity.y === 0 || this.player2.body.velocity.y) {
+        this.player.play("run", true).chain("idle");
+        this.player.flipX = true;
 
-  update(time, delta){
-	
-    this.hpText.text =`${this.state.boxHP}`
-    this.criticalHP()
-
-    this.player2.setVelocityX(0)
-     this.player.setVelocityX(0)
-    if(this.cursor.left.isDown){
-      this.player.setVelocityX(-150)
-      this.player2.setVelocityX(-150)
-      if(this.player.body.velocity.y ===0 || this.player2.body.velocity.y){
-
-        this.player.play('run',true).chain('idle')
-        this.player.flipX=true
-
-        this.player2.play('run2',true).chain('idle2')
-        this.player2.flipX=true
-
+        this.player2.play("run2", true).chain("idle2");
+        this.player2.flipX = true;
       }
+    } else if (this.cursor.right.isDown) {
+      this.player.setVelocityX(150);
+      this.player2.setVelocityX(150);
+      if (
+        this.player.body.velocity.y === 0 ||
+        this.player2.body.velocity.y === 0
+      ) {
+        this.player.play("run", true).chain("idle");
+        this.player.flipX = false;
 
-    }else if(this.cursor.right.isDown){
-      this.player.setVelocityX(150)
-      this.player2.setVelocityX(150)
-      if(this.player.body.velocity.y ===0 || this.player2.body.velocity.y ===0){
-
-        this.player.play('run',true).chain('idle')
-        this.player.flipX=false
-
-        this.player2.play('run2',true).chain('idle2')
-        this.player2.flipX=false
+        this.player2.play("run2", true).chain("idle2");
+        this.player2.flipX = false;
       }
-    }else if(this.cursor.up.isDown && this.player.body.onFloor() || this.cursor.up.isDown && this.player2.body.onFloor() ){
-      this.player.setVelocityY(-250) 
-      this.player.play('jump').chain('idle')
-
-      this.player2.setVelocityY(-250) 
-    
-      this.player2.play('jump2').chain('idle2')
-       
+    } else if (
+      (this.cursor.up.isDown && this.player.body.onFloor()) ||
+      (this.cursor.up.isDown && this.player2.body.onFloor())
+    ) {
+      this.player.setVelocityY(-250);
       this.player.play("jump").chain("idle");
 
-    }else if(Phaser.Input.Keyboard.JustDown(this.cursor.space)){
-      if(!this.player.flipX){
-        abc=false
+      this.player2.setVelocityY(-250);
+
+      this.player2.play("jump2").chain("idle2");
+
+      this.player.play("jump").chain("idle");
+    } else if (Phaser.Input.Keyboard.JustDown(this.cursor.space)) {
+      if (!this.player.flipX) {
+        abc = false;
         this.swordHitbox.x = this.player.x + 80;
         this.swordHitbox.y = this.player.y + 60;
-      }else{
-        abc=true
+      } else {
+        abc = true;
         this.swordHitbox.x = this.player.x - 80;
-        this.swordHitbox.y = this.player.y +60;
+        this.swordHitbox.y = this.player.y + 60;
       }
-        this.player.play('attack',false).chain('idle')
-        this.player2.play('attack2').chain('idle2')
-        this.swordHitbox.body.enable = true
-			this.physics.world.add(this.swordHitbox.body)
+      this.player.play("attack", false).chain("idle");
+      this.player2.play("attack2").chain("idle2");
+      this.swordHitbox.body.enable = true;
+      this.physics.world.add(this.swordHitbox.body);
       setTimeout(() => {
-        this.swordHitbox.body.enable = false
-        this.physics.world.remove(this.swordHitbox.body)
+        this.swordHitbox.body.enable = false;
+        this.physics.world.remove(this.swordHitbox.body);
       }, 20);
       this.fireBullet();
+    }
+    // Shop на E
+    if (this.physics.overlap(this.player, this.shop)) {
+      if (Phaser.Input.Keyboard.JustDown(this.eKey)) {
+        this.cameras.main.fadeOut(2000, 0, 0, 0, function () {
+          window.location.href = "http://localhost:3000/shop";
+        });
+        if (this.shopText) {
+          this.shopText.destroy();
+          this.shopText = null;
+        }
+      }
+    }
 
-      }  
-    
+    // Портал на T
+    if (this.physics.overlap(this.player, this.portal)) {
+      if (Phaser.Input.Keyboard.JustDown(this.TKey)) {
+        this.cameras.main.fadeOut(2000, 0, 0, 0, function () {
+          window.location.href = "http://localhost:3000/game";
+        });
+      }
+    }
   }
-    
-  
+
   //* Можно прыгать в воздухе
-//   if(this.cursor.up.isDown && Phaser.Input.Keyboard.JustDown(this.cursor.up)) {
+  //   if(this.cursor.up.isDown && Phaser.Input.Keyboard.JustDown(this.cursor.up)) {
 
-//     this.player.setVelocityY(-300);
+  //     this.player.setVelocityY(-300);
 
-//     this.anims.play('jumpup', this.player);
+  //     this.anims.play('jumpup', this.player);
 
-    // }
-  }
+  // }
 }
