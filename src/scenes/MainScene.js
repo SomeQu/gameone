@@ -1,4 +1,7 @@
+
 import Phaser from 'phaser'
+import Enemy from "./Enemy";
+import GameOver from "./GameOver";
 
 let abc=false;
 class Laser extends Phaser.Physics.Arcade.Sprite
@@ -84,18 +87,44 @@ export default class MainScene extends Phaser.Scene
     '/player2/ranger.png',
      '/player2/ranger_atlas.json',
      {frameWidth:300, frameHeight:100 })
+         this.load.atlas(
+      "enemyBot",
+      "/enemyBot/skeleton_sheet.png",
+      "/enemyBot/skeleton_atlas.json",
+      { frameWidth: 300, frameHeight: 100 }
+    );
     
   }
   
   create() {
+    // группа для ботов
+    this.enemies = this.add.group({
+      classType: Enemy,
+      runChildUpdate: true,
+      enemy: Enemy,
+    });
+
+    // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
+    this.time.addEvent({
+      delay: 3000,
+      loop: false,
+      callback: this.addEnemy,
+      callbackScope: this, // контекст функции
+    });
+    this.physics.add.collider(this.enemies, this.ground);
+    
+
+    this.add.image("961", "320", "sky");
     this.laserGroup = new LaserGroup(this);
     this.add.image('961','320','sky')
     
     this.ground = this.physics.add.staticGroup()
 
-    this.ground.create('961', '620', 'ground')
-    this.ground.create('300', '620', 'ground')
-    this.ground.create('1500', '620', 'ground')
+
+    this.ground.create("961", "620", "ground");
+    this.ground.create("300", "620", "ground");
+    this.ground.create("1500", "620", "ground");
+
 
     //*  мечник
     this.player=this.physics.add.sprite(100, 500,'player', 'idle_1.png')
@@ -114,24 +143,19 @@ export default class MainScene extends Phaser.Scene
     this.physics.add.collider(this.player2, this.ground)
 
     this.cursor = this.input.keyboard.createCursorKeys()
-
-
+    this.cursor = this.input.keyboard.createCursorKeys();
     this.box = this.add.rectangle(400, 550, 100, 100, 0xffffff);
+
     this.physics.add.existing(this.box, true)
     this.physics.add.collider(this.player, this.box)
     this.hpText = this.add.text(this.box.x, this.box.y - 90, `HP: ${Math.floor(this.state.boxHP)}`)
 			.setOrigin(0.5).setVisible(true)
 
-
-    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff",0);
+    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff", 0);
     this.physics.add.existing(this.swordHitbox);
     this.swordHitbox.body.enable = false;
     this.physics.world.remove(this.swordHitbox.body);
     console.log(this.swordHitbox.body);
-
-
-
-		console.log(this.swordHitbox.body)
 
 
         this.physics.add.collider(this.swordHitbox, this.box);
@@ -142,6 +166,7 @@ export default class MainScene extends Phaser.Scene
       null,
       this
     );
+
 
     this.physics.add.overlap(
       this.laserGroup,
@@ -216,7 +241,7 @@ export default class MainScene extends Phaser.Scene
       frameRate: 20,
       repeat: 0,
     });
-
+    
     this.anims.create({
       key: "run2",
       frames: this.player2.anims.generateFrameNames("player2", {
@@ -262,30 +287,123 @@ export default class MainScene extends Phaser.Scene
       repeat: 0,
     });
     console.log(this.player)
-    // this.scene.start("MainScene");
     
+    // this.scene.start("MainScene");
+    // какого-то хуя не работают анимации ругаетя на generateframesname
+
+    //   this.anims.create({
+    //     key: "atk",
+    //     frames: this.enemies.anims.generateFrameNames("enemyBot", {
+    //       start: 0,
+    //       end: 17,
+    //       prefix: "atk_",
+    //       suffix: ".ase",
+    //     }),
+    //     frameRate: 10,
+    //     repeat: -1,
+    //   });
+    //   this.anims.create({
+    //     key: "dead",
+    //     frames: this.enemies.anims.generateFrameNames("enemyBot", {
+    //       start: 18,
+    //       end: 33,
+    //       prefix: "dead_",
+    //       suffix: ".ase",
+    //     }),
+    //     frameRate: 20,
+    //     repeat: 0,
+    //   });
+    //   this.anims.create({
+    //     key: "hit",
+    //     frames: this.enemies.anims.generateFrameNames("enemyBot", {
+    //       start: 34,
+    //       end: 42,
+    //       prefix: "hit_",
+    //       suffix: ".ase",
+    //     }),
+    //     frameRate: 20,
+    //     repeat: 0,
+    //   });
+    //   this.anims.create({
+    //     key: "walk",
+    //     frames: this.enemies.anims.generateFrameNames("enemyBot", {
+    //       start: 43,
+    //       end: 56,
+    //       prefix: "walk_",
+    //       suffix: ".ase",
+    //     }),
+    //     frameRate: 15,
+    //   });
   }
-  overlapping(box, swordHitbox){
-    console.log('hi there')
-    this.state.boxHP += -10
-    console.log(this.state.boxHP)
+
+  addEnemy() {
+    // создаем нового бота
+    const enemy = new Enemy(
+      this,
+      (this.enemy = this.physics.add.sprite(
+        Phaser.Math.Between(100, 800),
+        Phaser.Math.Between(100, 900),
+        "enemyBot"
+      )),
+      this.physics.add.collider(this.enemy, this.ground),
+      this.enemy.setBodySize(40, 50),
+      this.enemy.setCollideWorldBounds(true),
+      this.physics.add.existing(this.enemy, true)
+    );
+    if (this.player) {
+      // вычисляем расстояние до цели
+      const distance = Phaser.Math.Distance.Between(
+        this.enemy.x,
+        this.player.x,
+        this.enemy.y,
+        this.player.y
+      );
+
+      // если расстояние меньше, чем допустимый порог, останавливаем бота
+      if (distance < 10) {
+        this.enemy.setVelocity(0, 0);
+        this.enemy.play("atk", true);
+      }
+
+      // вычисляем вектор направления движения к цели
+      const angle = Phaser.Math.Angle.Between(
+        this.enemy.x,
+        this.enemy.y,
+        this.player.x,
+        this.player.y,
+        this.enemy.play("walk", true)
+      );
+      const vx = Math.cos(angle) * this.speed;
+      const vy = Math.sin(angle) * this.speed;
+
+      // устанавливаем скорость движения бота
+      this.enemy.setVelocity(vx, vy);
+    }
+
+    // добавляем бота в группу
+    this.enemies.add(enemy);
+  }
+  
+  overlapping(box, swordHitbox) {
+    console.log("hi there");
+    this.state.boxHP += -10;
+    console.log(this.state.boxHP);
+  }
+  criticalHP() {
+    if (this.hpText.text <= 30) {
+      this.box.fillColor = 0xff0000;
+      
+    if (this.hpText.text <= 0) {
+       this.hpText.setVisible(false);
+       this.time.delayedCall(1000, () => {
+       this.scene.start("GameOver");
+    });
   }
   bulletOverlapping(){
     this.state.boxHP += -0.5
-
-
-  }
-  criticalHP(){
-    if(this.hpText.text<= 30){
-      this.box.fillColor = 0xff0000
     }
-    if(this.hpText.text<=0){
-      this.box.destroy()
-      this.hpText.setVisible(false)
-    }
-  }
-
-  fireBullet() {
+    
+      fireBullet() {
     if(!abc){
 
       this.laserGroup.fireBullet(this.player2.x+80, this.player2.y+60);
@@ -296,9 +414,10 @@ export default class MainScene extends Phaser.Scene
 
     
 	}
-  update(){
-	
 
+
+  update(time, delta){
+	
     this.hpText.text =`${this.state.boxHP}`
     this.criticalHP()
 
@@ -336,9 +455,7 @@ export default class MainScene extends Phaser.Scene
     
       this.player2.play('jump2').chain('idle2')
        
-
-    
-      // this.player.play('jumpup', true)
+      this.player.play("jump").chain("idle");
 
     }else if(Phaser.Input.Keyboard.JustDown(this.cursor.space)){
       if(!this.player.flipX){
@@ -372,9 +489,6 @@ export default class MainScene extends Phaser.Scene
 
 //     this.anims.play('jumpup', this.player);
 
-// }
-
-// }
-
+    // }
+  }
 }
-
