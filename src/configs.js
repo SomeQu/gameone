@@ -1,20 +1,21 @@
+import Phaser from "phaser";
+import MainScene from "./scenes/MainScene";
 
-import Phaser from 'phaser'
-import MainScene from './scenes/MainScene'
+const config = {
+  type: Phaser.WEBGL,
+  width: "100%",
+  height: "115%",
 
- const config={
-        type: Phaser.WEBGL,
-        width: 1920,
-        height: 640,
-        backgroundColor: "grey",
-        physics: {
-          default: "arcade",
-          arcade: {
-            gravity: {y: 300 }
-          }
-        },
-        scene: [MainScene],
-        pixelArt: true,
-        roundPixels: true
-}
-export default config
+  backgroundColor: "grey",
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y: 500 },
+      debug: true,
+    },
+  },
+  scene: [MainScene],
+  pixelArt: true,
+  roundPixels: true,
+};
+export default config;
