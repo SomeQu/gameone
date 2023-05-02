@@ -1,13 +1,16 @@
-import Phaser from "phaser";
+import Phaser, { Cameras } from "phaser";
 import { useState } from "react";
 import Enemy from "./Enemy";
+import GameOver from "./GameOver";
+import Scene from "phaser";
 
 export default class MainScene extends Phaser.Scene {
   state = {
     boxHP: 100,
+    playerHP: 100,
   };
 
-  constructor() {
+  constructor(scene) {
     super("MainScene");
     this.player = null;
     this.box = null;
@@ -41,7 +44,7 @@ export default class MainScene extends Phaser.Scene {
     // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
     this.time.addEvent({
       delay: 3000,
-      loop: true,
+      loop: false,
       callback: this.addEnemy,
       callbackScope: this, // контекст функции
     });
@@ -267,6 +270,9 @@ export default class MainScene extends Phaser.Scene {
     if (this.hpText.text <= 0) {
       this.box.destroy();
       this.hpText.setVisible(false);
+      this.time.delayedCall(1000, () => {
+        this.scene.start("GameOver");
+      });
     }
   }
   update(time, delta) {

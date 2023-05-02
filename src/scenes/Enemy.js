@@ -32,6 +32,7 @@ class Enemy extends Phaser.GameObjects.Sprite {
     );
   }
 
+  // hi
   create() {
     this.enemies = this.physics.add.sprite(800, 580, "enemy");
 
