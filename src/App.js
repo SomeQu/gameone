@@ -1,9 +1,10 @@
-import GameComponent from "./PhaserGame";
+// import GameComponent from "./PhaserGame";
+import MainRoute from "./routes/MainRoute";
 
 function App() {
   return (
     <div className="App">
-      <GameComponent/>
+      <MainRoute />
     </div>
   );
 }
