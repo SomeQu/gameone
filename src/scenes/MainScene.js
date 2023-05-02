@@ -9,14 +9,13 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
   }
 
   fire(x, y) {
-		this.body.reset(x, y);
+    this.body.reset(x, y);
 
-		this.setActive(true);
-		this.setVisible(true);
-    if(!abc){
+    this.setActive(true);
+    this.setVisible(true);
+    if (!abc) {
       this.setVelocityX(1200);
-
-    }else{
+    } else {
       this.setVelocityX(-1200);
     }
     this.body.allowGravity = false;
@@ -33,37 +32,24 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
   }
 }
 
-class LaserGroup extends Phaser.Physics.Arcade.Group
-{
-  
-	constructor(scene) {
-		super(scene.physics.world, scene);
+class LaserGroup extends Phaser.Physics.Arcade.Group {
+  constructor(scene) {
+    super(scene.physics.world, scene);
 
     this.createMultiple({
-			frameQuantity: 30,
-			key:'laser02',
-			active: false,
-			visible: false,
-			classType: Laser,
-		});
- 
-	}
-	fireBullet(x, y) {
-		const laser = this.getFirstDead(false);
-
-		if(laser) {
-			laser.fire(x, y);
-		}
-	}
-
-
-    this.lassor = this.createMultiple({
       frameQuantity: 30,
-      key: "laser",
+      key: "laser02",
       active: false,
       visible: false,
       classType: Laser,
     });
+  }
+  fireBullet(x, y) {
+    const laser = this.getFirstDead(false);
+
+    if (laser) {
+      laser.fire(x, y);
+    }
   }
 
   fireBullet(x, y) {
@@ -97,7 +83,7 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("under", "/background/under.png");
     this.load.image("sky2", "/background/sky1.png");
 
-    this.load.image("laser", "/player2/shoot.png");
+    this.load.atlas("laser", "/player2/shoot.png", "/player2/shoot_atlas.json");
 
     this.load.atlas(
       "player",
@@ -593,7 +579,6 @@ export default class MainScene extends Phaser.Scene {
         this.physics.world.remove(this.swordHitbox.body);
       }, 20);
       this.fireBullet();
-
     }
     // Shop на E
     if (this.physics.overlap(this.player, this.shop)) {
