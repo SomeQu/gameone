@@ -137,8 +137,8 @@ export default class MainScene extends Phaser.Scene {
     }
   }
   create() {
-    
-    // // // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
+
+        // // // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
     // this.time.addEvent({
     //     delay: 3000,
     //     loop: true,
@@ -210,7 +210,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.cursor = this.input.keyboard.createCursorKeys();
     this.cursor = this.input.keyboard.createCursorKeys();
-    this.box = this.add.rectangle(400, 550, 100, 100, 0xffffff);
+    this.box = this.add.rectangle(400, 800, 100, 100, 0xffffff);
 
     this.physics.add.existing(this.box, true);
     this.physics.add.collider(this.player, this.box);
@@ -486,7 +486,7 @@ export default class MainScene extends Phaser.Scene {
       if (this.hpText.text <= 0) {
         this.hpText.setVisible(false);
         this.time.delayedCall(1000, () => {
-          // this.scene.start("GameOver");
+          this.scene.start("GameOver");
         });
       }
     }
