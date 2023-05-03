@@ -126,6 +126,13 @@ export default class MainScene extends Phaser.Scene {
     }
   }
   create() {
+    // // // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
+    // this.time.addEvent({
+    //     delay: 3000,
+    //     loop: true,
+    //     callback: this.addEnemy,
+    //     callbackScope: this, // контекст функции
+    //   });
     this.laserGroup = new LaserGroup(this);
     this.laserGroup.setDepth(1);
     // this.laserGroup.angle(90)
@@ -269,7 +276,7 @@ export default class MainScene extends Phaser.Scene {
     this.portal.setDepth(0);
 
     // Sword Hitbox
-    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff");
+    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff", 0);
     this.physics.add.existing(this.swordHitbox);
     this.swordHitbox.body.enable = false;
     this.physics.world.remove(this.swordHitbox.body);
