@@ -3,14 +3,14 @@ import MainScene from "./scenes/MainScene";
 
 const config = {
   type: Phaser.WEBGL,
-  width: "100%",
-  height: "115%",
+  width: window.innerWidth,
+  height: window.innerHeight,
   backgroundColor: "grey",
   physics: {
     default: "arcade",
     arcade: {
       gravity: { y: 500 },
-      debug: true,
+      debug: false,
     },
   },
   scene: [MainScene],

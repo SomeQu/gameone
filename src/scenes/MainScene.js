@@ -1,6 +1,5 @@
 import Phaser from "phaser";
-import Enemy from "./Enemy";
-import GameOver from "./GameOver";
+import config from "../configs";
 
 let abc = false;
 class Laser extends Phaser.Physics.Arcade.Sprite {
@@ -52,18 +51,12 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
     }
   }
 
-  fireBullet(x, y) {
-    const laser = this.getFirstDead(false);
-
-    if (laser) {
-      laser.fire(x, y);
-    }
-  }
 }
 
 export default class MainScene extends Phaser.Scene {
   state = {
     boxHP: 100,
+    playerHP:5
   };
   constructor() {
     super("MainScene");
@@ -82,9 +75,19 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("sky1", "/background/sky1.png");
     this.load.image("under", "/background/under.png");
     this.load.image("sky2", "/background/sky1.png");
+    
+    
+   
+
+
+
 
     this.load.atlas("laser", "/player2/shoot.png", "/player2/shoot_atlas.json");
 
+
+
+
+    this.load.audio('swordSwing', ['/sound/mixkit-fantasy-sword-slide-2798.wav']);
     this.load.atlas(
       "player",
       "/player/knight_texture.png",
@@ -110,26 +113,40 @@ export default class MainScene extends Phaser.Scene {
       "/player/portal_atlas.json"
     );
   }
+  generateEnemy () {
+    const xCoordinate = Math.random() * 1200;
+    this.enemies.create(xCoordinate, 750, 'enemyBot');  
 
+  }
+ 
+  EnemyCollide(swordHitbox, enemy){
+    enemy.destroy()
+    
+  }
+  EnemyAndPlayerCollide(){
+    setTimeout(() => {
+      console.log('hello there')
+      this.state.playerHP-= 0.02
+      console.log(this.state.playerHP)
+     
+    }, 1000);
+  }
+  playerDestroy(){
+    if(this.state.playerHP<=0){
+      this.player.visible =false
+    }
+  }
   create() {
-    // группа для ботов
-    this.enemies = this.add.group({
-      classType: Enemy,
-      runChildUpdate: true,
-      enemy: Enemy,
-    });
-
-    // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
-    this.time.addEvent({
-      delay: 3000,
-      loop: true,
-      callback: this.addEnemy,
-      callbackScope: this, // контекст функции
-    });
-    this.physics.add.collider(this.enemies, this.ground);
-
-    this.laserGroup = new LaserGroup(this);
-    this.laserGroup.setDepth(1);
+    
+    // // // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
+    // this.time.addEvent({
+    //     delay: 3000,
+    //     loop: true,
+    //     callback: this.addEnemy,
+    //     callbackScope: this, // контекст функции
+    //   });
+      this.laserGroup = new LaserGroup(this);
+      this.laserGroup.setDepth(1);
     // this.laserGroup.angle(90)
     // Настройка свойств камеры и создание
     this.cameras.main.fadeIn(5000);
@@ -146,11 +163,21 @@ export default class MainScene extends Phaser.Scene {
     this.ground.create("2970", "880", "ground");
     this.ground.create("961", "880", "ground");
     this.ground.create("-1020", "880", "ground");
-
+    
     this.ground.children.entries[0].setSize(1920, 30);
     this.ground.children.entries[1].setSize(1920, 30);
     this.ground.children.entries[2].setSize(1920, 30);
-
+    
+    this.enemies = this.physics.add.group(); 
+    this.physics.add.collider(this.enemies ,this.ground)
+  
+    this.time.addEvent({
+        delay: 3000,
+        loop: true,
+        callback: this.generateEnemy,
+        callbackScope: this, // контекст функции
+      });
+  
     //*  мечник
     this.player = this.physics.add.sprite(100, 720, "player");
     this.player.setScale(2);
@@ -158,6 +185,11 @@ export default class MainScene extends Phaser.Scene {
     this.player.body.setOffset(120, 79);
     this.player.setCollideWorldBounds(true);
     this.physics.add.collider(this.player, this.ground);
+    this.physics.add.overlap(this.player
+      ,this.enemies, 
+      this.EnemyAndPlayerCollide,
+      null,
+      this)
     const framesNames = this.textures.get("player").getFrameNames();
     console.log(framesNames);
     // камера
@@ -187,6 +219,10 @@ export default class MainScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(true);
 
+      this.playerText = this.add
+      .text(this.player.x, this.player.y - 90, `HP: ${Math.floor(this.state.playerHP)}`)
+      .setOrigin(0.5)
+      .setVisible(true);
     // SHOP
     this.shop = this.physics.add.sprite(800, 795, "shop");
     this.shop.setScale(1.5);
@@ -246,7 +282,7 @@ export default class MainScene extends Phaser.Scene {
     this.portal.setDepth(0);
 
     // Sword Hitbox
-    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff");
+    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff",0);
     this.physics.add.existing(this.swordHitbox);
     this.swordHitbox.body.enable = false;
     this.physics.world.remove(this.swordHitbox.body);
@@ -268,7 +304,12 @@ export default class MainScene extends Phaser.Scene {
       null,
       this
     );
-
+    this.physics.add.overlap(
+      this.enemies,
+      this.swordHitbox, 
+      this.EnemyCollide,
+       null, 
+       this)
     this.anims.create({
       key: "run",
       frames: this.player.anims.generateFrameNames("player", {
@@ -417,65 +458,21 @@ export default class MainScene extends Phaser.Scene {
     //     frameRate: 20,
     //     repeat: 0,
     //   });
-    //   this.anims.create({
-    //     key: "walk",
-    //     frames: this.enemies.anims.generateFrameNames("enemyBot", {
-    //       start: 43,
-    //       end: 56,
-    //       prefix: "walk_",
-    //       suffix: ".ase",
-    //     }),
-    //     frameRate: 15,
-    //   });
+      this.anims.create({
+        key: "walk",
+        frames: this.anims.generateFrameNames("enemyBot", {
+          start: 0,
+          end: 13,
+          prefix: "walk_",
+          suffix: ".ase",
+        }),
+        frameRate: 15,
+        repeat:-1
+      });
+
   }
 
-  addEnemy() {
-    // создаем нового бота
-    const enemy = new Enemy(
-      this,
-      (this.enemy = this.physics.add.sprite(
-        Phaser.Math.Between(100, 800),
-        Phaser.Math.Between(100, 900),
-        "enemyBot"
-      )),
-      this.physics.add.collider(this.enemy, this.ground),
-      this.enemy.setBodySize(40, 50),
-      this.enemy.setCollideWorldBounds(true),
-      this.physics.add.existing(this.enemy, true)
-    );
-    if (this.player) {
-      // вычисляем расстояние до цели
-      const distance = Phaser.Math.Distance.Between(
-        this.enemy.x,
-        this.player.x,
-        this.enemy.y,
-        this.player.y
-      );
 
-      // если расстояние меньше, чем допустимый порог, останавливаем бота
-      if (distance < 10) {
-        this.enemy.setVelocity(0, 0);
-        this.enemy.play("atk", true);
-      }
-
-      // вычисляем вектор направления движения к цели
-      const angle = Phaser.Math.Angle.Between(
-        this.enemy.x,
-        this.enemy.y,
-        this.player.x,
-        this.player.y,
-        this.enemy.play("walk", true)
-      );
-      const vx = Math.cos(angle) * this.speed;
-      const vy = Math.sin(angle) * this.speed;
-
-      // устанавливаем скорость движения бота
-      this.enemy.setVelocity(vx, vy);
-    }
-
-    // добавляем бота в группу
-    this.enemies.add(enemy);
-  }
 
   overlapping(box, swordHitbox) {
     console.log("hi there");
@@ -506,10 +503,22 @@ export default class MainScene extends Phaser.Scene {
       this.laserGroup.fireBullet(this.player2.x - 80, this.player2.y + 60);
     }
   }
-
+ 
   update(time, delta) {
+    this.playerDestroy()
+    this.playerText.x= this.player.x
+    this.playerText.y=this.player.y
+    this.enemies.playAnimation('walk', 'walk_0.ase')
+    Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
+      if(enemy.body.onFloor()){
+        this.physics.moveToObject(enemy, this.player, 100);
+      }
+         
+  }, this);
     this.hpText.text = `${this.state.boxHP}`;
+    this.playerText.text = Math.ceil(this.state.playerHP) 
     this.criticalHP();
+   
 
     // анимации шоп
     this.shop.setVelocityX(0);
@@ -563,14 +572,15 @@ export default class MainScene extends Phaser.Scene {
     } else if (Phaser.Input.Keyboard.JustDown(this.cursor.space)) {
       if (!this.player.flipX) {
         abc = false;
-        this.swordHitbox.x = this.player.x + 80;
-        this.swordHitbox.y = this.player.y + 60;
+        this.swordHitbox.body.x = this.player.x + 80;
+        this.swordHitbox.body.y = this.player.y + 60;
       } else {
         abc = true;
         this.swordHitbox.x = this.player.x - 80;
         this.swordHitbox.y = this.player.y + 60;
       }
       this.player.play("attack", false).chain("idle");
+      
       this.player2.play("attack2").chain("idle2");
       this.swordHitbox.body.enable = true;
       this.physics.world.add(this.swordHitbox.body);
