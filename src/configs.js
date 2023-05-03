@@ -1,10 +1,11 @@
 import Phaser from "phaser";
 import MainScene from "./scenes/MainScene";
+import GameOver from "./scenes/GameOver";
 
 const config = {
   type: Phaser.WEBGL,
-  width: "100%",
-  height: "115%",
+  width: window.innerWidth,
+  height: window.innerHeight,
   backgroundColor: "grey",
   physics: {
     default: "arcade",
@@ -13,7 +14,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [MainScene],
+  scene: [MainScene, GameOver],
   pixelArt: true,
   roundPixels: true,
 };

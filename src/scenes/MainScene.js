@@ -116,17 +116,18 @@ export default class MainScene extends Phaser.Scene {
     this.enemies = this.add.group({
       classType: Enemy,
       runChildUpdate: true,
-      enemy: Enemy,
+      visible: true,
     });
 
     // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
     this.time.addEvent({
       delay: 3000,
-      loop: true,
+      loop: false,
       callback: this.addEnemy,
       callbackScope: this, // контекст функции
     });
     this.physics.add.collider(this.enemies, this.ground);
+    this.enemies.setDepth(1);
 
     this.laserGroup = new LaserGroup(this);
     this.laserGroup.setDepth(1);
@@ -178,7 +179,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.cursor = this.input.keyboard.createCursorKeys();
     this.cursor = this.input.keyboard.createCursorKeys();
-    this.box = this.add.rectangle(400, 550, 100, 100, 0xffffff);
+    this.box = this.add.rectangle(400, 800, 100, 100, 0xffffff);
 
     this.physics.add.existing(this.box, true);
     this.physics.add.collider(this.player, this.box);
@@ -246,7 +247,7 @@ export default class MainScene extends Phaser.Scene {
     this.portal.setDepth(0);
 
     // Sword Hitbox
-    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff");
+    this.swordHitbox = this.add.rectangle(130, 130, 100, 150, "0xfqqfff", 0);
     this.physics.add.existing(this.swordHitbox);
     this.swordHitbox.body.enable = false;
     this.physics.world.remove(this.swordHitbox.body);
@@ -489,7 +490,7 @@ export default class MainScene extends Phaser.Scene {
       if (this.hpText.text <= 0) {
         this.hpText.setVisible(false);
         this.time.delayedCall(1000, () => {
-          // this.scene.start("GameOver");
+          this.scene.start("GameOver");
         });
       }
     }

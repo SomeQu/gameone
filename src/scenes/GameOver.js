@@ -10,18 +10,18 @@ export default class GameOver extends Scene {
   }
 
   create() {
-    console.log("you died");
     this.add
-      .text(150, 100, "you died", {
-        fontSize: 24,
-        color: "white",
+      .text(950, 500, "you died", {
+        fontSize: 70,
+        color: "red",
       })
       .setOrigin(0.5, 0.5);
 
     this.add
-      .text(150, 100, "press f to restart", {
-        fontSize: 24,
-        color: "white",
+      .text(950, 600, "press f to restart", {
+        fontSize: 50,
+        fontWeight: 700,
+        color: "red",
       })
       .setOrigin(0.5, 0.5);
   }
@@ -31,6 +31,7 @@ export default class GameOver extends Scene {
 
     if (Input.Keyboard.JustDown(spaceKey)) {
       this.scene.start("MainScene");
+      this.boxHP = 100;
     }
   }
 }
