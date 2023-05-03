@@ -126,22 +126,6 @@ export default class MainScene extends Phaser.Scene {
     }
   }
   create() {
-    // группа для ботов
-    this.enemies = this.add.group({
-      classType: Enemy,
-      runChildUpdate: true,
-      enemy: Enemy,
-    });
-
-    // событие, которое будет выполняться каждые 3 секунды типа сетинтервал
-    this.time.addEvent({
-      delay: 3000,
-      loop: true,
-      callback: this.addEnemy,
-      callbackScope: this, // контекст функции
-    });
-    this.physics.add.collider(this.enemies, this.ground);
-
     this.laserGroup = new LaserGroup(this);
     this.laserGroup.setDepth(1);
     // this.laserGroup.angle(90)
