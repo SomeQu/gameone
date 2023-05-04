@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import MainScene from "./scenes/MainScene";
 import GameOver from "./scenes/GameOver";
 import SceneWithBoss from "./scenes/SceneWithBoss";
+
 import WinScene from "./scenes/WinScene";
 
 const config = {
@@ -16,6 +17,7 @@ const config = {
       debug: false,
     },
   },
+
   scene: [MainScene, GameOver, SceneWithBoss, WinScene],
   pixelArt: true,
   roundPixels: true,

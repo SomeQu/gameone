@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+      this.setVelocityX(-1200);
 import config from "../configs";
 
 let abc = false;
@@ -16,7 +17,6 @@ class Laser extends Phaser.Physics.Arcade.Sprite {
     if (!abc) {
       this.setVelocityX(1200);
     } else {
-      this.setVelocityX(-1200);
     }
     this.body.allowGravity = false;
     console.log(abc);
