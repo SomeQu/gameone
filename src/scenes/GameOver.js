@@ -6,10 +6,13 @@ export default class GameOver extends Scene {
   }
 
   preload() {
+    this.load.audio('mainMusic', ['/sound/undertale_085. Fallen Down (Reprise).mp3'])
     // load font
   }
 
   create() {
+    this.mainMusic= this.sound.add('mainMusic', {loop:false})
+    this.mainMusic.play()
     this.add
       .text(950, 500, "you died", {
         fontSize: 70,
