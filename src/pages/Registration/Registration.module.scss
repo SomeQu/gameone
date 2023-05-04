@@ -1,0 +1,53 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+form {
+  height: 1000px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+label {
+  font-size: 60px;
+  color: #F1DCC9;
+  text-shadow: 0 5px #362026, 1px 1px white;
+}
+
+input {
+  width: 200px;
+  padding: 10px;
+  margin: 20px;
+  box-shadow: 0 1px #362026, 1px 1px white;
+}
+
+input:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #bdbdbd;
+  outline: 0;
+  box-shadow: 0 0 0 0.1rem rgba(158, 158, 158, 0.8);
+}
+
+button {
+  font-size: 20px;
+  font-family: 'Press Start 2P';
+  text-transform: uppercase;
+  text-align: center;
+  display: inline-block;
+  margin: 20px;
+  font-weight: bold;
+  padding: 10px 40px;
+  background-color: #F1DCC9;
+  text-shadow: -1px -1px black, 1px 1px white;
+  color: #362026;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -o-border-radius: 7px;
+  border-radius: 7px;
+  box-shadow: 0 0.2em #362026;
+  cursor: pointer;
+}
