@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import MainScene from "./scenes/MainScene";
 import GameOver from "./scenes/GameOver";
+import SceneWithBoss from "./scenes/SceneWithBoss";
 
 const config = {
   type: Phaser.WEBGL,
@@ -14,7 +15,7 @@ const config = {
       debug: true,
     },
   },
-  scene: [MainScene, GameOver],
+  scene: [MainScene, GameOver, SceneWithBoss],
   pixelArt: true,
   roundPixels: true,
 };
