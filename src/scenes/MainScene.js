@@ -56,10 +56,10 @@ class LaserGroup extends Phaser.Physics.Arcade.Group {
 
 export default class MainScene extends Phaser.Scene {
   state = {
-    playerHP:5,
+    playerHP: null,
     coinCounter:0,
     killCount:0,
-    isSwordsman:false,
+    isSwordsman:true,
     demonHP:100
   };
   constructor() {
@@ -195,7 +195,15 @@ export default class MainScene extends Phaser.Scene {
     laser.destroy()
     this.state.demonHP-=2
   }
+  demonAndSwordOverlap(demon,sword){
+    this.state.demonHP-=2
+  }
   create() {
+    if(this.state.isSwordsman===true){
+      this.state.playerHP=10
+    }else if(this.state.isSwordsman===false){
+      this.state.playerHP=5
+    }
     this.whoosh=this.sound.add('whoosh', {loop:false})
     this.swing = this.sound.add('swordSwing', {loop:false})
     this.deathSound = this.sound.add('death', {loop:false})
@@ -420,6 +428,12 @@ export default class MainScene extends Phaser.Scene {
            this.demonAndLaserOverlap, 
            null, 
            this)
+           this.physics.add.overlap(
+            this.swordHitbox,
+             this.demon, 
+             this.demonAndSwordOverlap, 
+             null, 
+             this)
         
 
     if(this.state.isSwordsman===true){
@@ -637,7 +651,7 @@ export default class MainScene extends Phaser.Scene {
   }
   demonLogic(){
 
-    const choosing = Math.round(Math.random()*6)
+    const choosing = Math.round(Math.random()*3)
     console.log(choosing)
     if(choosing==1){
       this.demon.play('demonWalk',true)
@@ -648,7 +662,7 @@ export default class MainScene extends Phaser.Scene {
       this.demon.setVelocityX(-100)
       this.demon.flipX=false
 
-    }else if(choosing===3 || choosing===4 || choosing===5 ||choosing===6){
+    }else if(choosing===3){
       this.demon.setVelocityX(0)
       this.demon.play('demonCleave').chain('demonIdle')
       this.demonSword.body.enable = true;
@@ -656,7 +670,7 @@ export default class MainScene extends Phaser.Scene {
       setTimeout(() => {
         this.demonSword.body.enable = false;
         this.physics.world.remove(this.demonSword.body);
-      }, 1500);
+      }, 500);
     }
   }
   update(time, delta) {
@@ -675,7 +689,6 @@ export default class MainScene extends Phaser.Scene {
     this.coinText.text=`Collected Coins: ${this.state.coinCounter}`
     this.playerText.x= this.player.x
     this.playerText.y=this.player.y
-    this.enemies.playAnimation('walk', 'walk_0.ase')
     this.coins.playAnimation('spin', 'monedaNo1_00 0.png')
     this.laserGroup.playAnimation('shoot', '#shoot_0.aseprite')
     Phaser.Actions.Call(this.enemies.getChildren(), function(enemy) {
@@ -687,6 +700,7 @@ export default class MainScene extends Phaser.Scene {
         }else if(enemy.body.velocity.x<0){
           enemy.flipX=true
         }
+        this.enemies.playAnimation('walk', 'walk_0.ase')
         this.physics.moveToObject(enemy, this.player, 100);
         
       }
@@ -790,8 +804,8 @@ export default class MainScene extends Phaser.Scene {
          this.swordHitbox.body.y = this.player.y + 60;
         }else{
           abc=true
-          this.swordHitbox.x = this.player.x - 80;
-          this.swordHitbox.y = this.player.y + 60;
+          this.swordHitbox.body.x = this.player.x - 80;
+          this.swordHitbox.body.y = this.player.y + 60;
         }
 
     if(Phaser.Input.Keyboard.JustDown(this.cursor.space)){
@@ -827,7 +841,7 @@ export default class MainScene extends Phaser.Scene {
     if (this.physics.overlap(this.player, this.portal)) {
       if (Phaser.Input.Keyboard.JustDown(this.TKey)) {
         this.cameras.main.fadeOut(2000, 0, 0, 0, function () {
-          window.location.href = "http://localhost:3000/game";
+          this.scene.start('SceneWithBoss');
         });
       }
     }

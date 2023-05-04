@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import MainScene from "./scenes/MainScene";
 import GameOver from "./scenes/GameOver";
+import SceneWithBoss from "./scenes/SceneWithBoss";
 
 const config = {
   type: Phaser.WEBGL,
@@ -11,10 +12,10 @@ const config = {
     default: "arcade",
     arcade: {
       gravity: { y: 500 },
-      debug: true,
+      debug: false,
     },
   },
-  scene: [MainScene, GameOver],
+  scene: [MainScene, GameOver, SceneWithBoss],
   pixelArt: true,
   roundPixels: true,
 };
